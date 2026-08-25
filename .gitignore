@@ -1,0 +1,10 @@
+*.csv
+*.pkl
+*.npy
+*.pt
+*.json
+roberta_lora_epoch1/
+roberta_lora_epoch2/
+roberta_lora_inprogress/
+.ruff_cache/
+.claude/
