@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Disaster Tweet Classifier</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <svg viewBox="0 0 24 24" class="brand-mark" aria-hidden="true">
+        <path d="M21.5 3h-3.6l-5 6.3L8.4 3H2.6l7.3 9.9L2.2 21h3.6l5.5-6.9L16.6 21h5.8l-7.7-10.4L21.5 3z"/>
+      </svg>
+      <span class="brand-name">Disaster Watch</span>
+    </header>
+
+    <main class="composer" role="main">
+      <div class="avatar" aria-hidden="true">DW</div>
+
+      <div class="composer-body">
+        <textarea
+          id="tweet-input"
+          class="compose-input"
+          rows="3"
+          maxlength="280"
+          placeholder="What's happening?"
+        ></textarea>
+
+        <div id="error" class="error" hidden></div>
+
+        <div class="composer-footer">
+          <div class="composer-icons" aria-hidden="true">
+            <span class="icon">🖼️</span>
+            <span class="icon">🎞️</span>
+            <span class="icon">📊</span>
+            <span class="icon">😀</span>
+          </div>
+          <div class="composer-actions">
+            <span id="char-count" class="char-count">280</span>
+            <button id="classify-btn" class="post-btn" disabled>Post</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="divider"></div>
+
+    <article id="result" class="tweet" hidden>
+      <div class="tweet-avatar" aria-hidden="true">DW</div>
+      <div class="tweet-body">
+        <div class="tweet-head">
+          <span class="tweet-name">Disaster Watch</span>
+          <span class="tweet-handle">@disaster_watch</span>
+          <span class="tweet-dot">·</span>
+          <span class="tweet-time">now</span>
+        </div>
+        <p id="tweet-echo" class="tweet-text"></p>
+        <div id="label" class="verdict-chip"></div>
+        <div class="confidence-row">
+          <span>Confidence</span>
+          <span id="confidence"></span>
+        </div>
+        <div class="tweet-engagement" aria-hidden="true">
+          <span class="eng"><span class="eng-icon">💬</span> 0</span>
+          <span class="eng"><span class="eng-icon">🔁</span> 0</span>
+          <span class="eng"><span class="eng-icon">❤️</span> 0</span>
+          <span class="eng"><span class="eng-icon">📊</span> 0</span>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

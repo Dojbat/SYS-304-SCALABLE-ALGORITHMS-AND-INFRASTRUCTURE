@@ -1,0 +1,293 @@
+:root {
+  color-scheme: dark;
+  --bg: #000000;
+  --border: #2f3336;
+  --text: #e7e9ea;
+  --muted: #71767b;
+  --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+  --danger: #f4212e;
+  --danger-bg: rgba(244, 33, 46, 0.12);
+  --safe: #00ba7c;
+  --safe-bg: rgba(0, 186, 124, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.shell {
+  width: 100%;
+  max-width: 600px;
+  min-height: 100vh;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  fill: var(--text);
+}
+
+.brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.composer {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.avatar,
+.tweet-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d9bf0, #7856ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: white;
+}
+
+.composer-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.compose-input {
+  width: 100%;
+  resize: none;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-family: inherit;
+  line-height: 1.4;
+  padding: 0.6rem 0;
+}
+
+.compose-input:focus {
+  outline: none;
+}
+
+.compose-input::placeholder {
+  color: var(--muted);
+}
+
+.composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.composer-icons {
+  display: flex;
+  gap: 0.9rem;
+  font-size: 1.05rem;
+  opacity: 0.75;
+}
+
+.composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.char-count {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.char-count.warn {
+  color: #ffd400;
+}
+
+.char-count.over {
+  color: var(--danger);
+}
+
+.post-btn {
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.post-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.post-btn:disabled {
+  background: var(--accent);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+  padding: 0.4rem 0;
+}
+
+.divider {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tweet {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  animation: slide-in 0.2s ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tweet {
+    animation: none;
+  }
+}
+
+.tweet-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tweet-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.tweet-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.tweet-handle,
+.tweet-dot,
+.tweet-time {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.tweet-text {
+  margin: 0.2rem 0 0.6rem;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.verdict-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+
+.verdict-chip.disaster {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.verdict-chip.safe {
+  color: var(--safe);
+  background: var(--safe-bg);
+}
+
+.confidence-row {
+  display: flex;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.6rem;
+}
+
+.tweet-engagement {
+  display: flex;
+  gap: 2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.eng {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.eng-icon {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 480px) {
+  .shell {
+    border-left: none;
+    border-right: none;
+  }
+
+  .compose-input {
+    font-size: 1.1rem;
+  }
+}

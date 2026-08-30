@@ -3,8 +3,11 @@
 !baseline_model.pkl
 *.npy
 *.pt
-*.json
 roberta_*/
 bertweet_*/
+llm_*_preds.json
+roberta_lora_progress.json
 .ruff_cache/
+.pytest_cache/
+__pycache__/
 .claude/

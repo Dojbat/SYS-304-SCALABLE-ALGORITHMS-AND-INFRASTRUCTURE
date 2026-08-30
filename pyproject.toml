@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+exclude = ["main.ipynb", "training"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+markers = [
+    "e2e: end-to-end UI tests that require a running docker compose stack",
+]
+addopts = "-m 'not e2e'"
