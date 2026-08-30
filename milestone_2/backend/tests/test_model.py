@@ -1,17 +1,17 @@
 import os
 
 import pytest
-from app.features import FEATURE_COLS
 from app.model import MODEL_PATH, load_model, predict_one
 
 pytestmark = pytest.mark.skipif(
-    not os.path.exists(MODEL_PATH), reason=f"baseline_model.pkl not found at {MODEL_PATH}"
+    not os.path.exists(MODEL_PATH), reason=f"LoRA model not found at {MODEL_PATH}"
 )
 
 
-def test_model_loads_and_reports_expected_feature_names():
-    model = load_model()
-    assert list(model.feature_names_in_) == FEATURE_COLS
+def test_model_loads():
+    tokenizer, model = load_model()
+    assert tokenizer is not None
+    assert model is not None
 
 
 def test_predict_one_returns_valid_schema():
