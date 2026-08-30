@@ -64,8 +64,10 @@ reproduce predictions without retraining (sections 13–17 only need `pandas`/`n
 
 ## Milestone 2: Deploying the Model Service
 
-The Milestone 1 baseline (`milestone_1/baseline_model.pkl`, accuracy **0.770**, disaster-class F1
-**0.692** on the held-out validation split) is now wrapped in a FastAPI backend
+The served model is `training/bertweet_lora_final_fulldata` — a LoRA fine-tune of
+`vinai/bertweet-base` (accuracy **0.85**, disaster-class F1 **0.83** on held-out validation),
+notably stronger than the Milestone 1 baseline (`milestone_1/baseline_model.pkl`, accuracy 0.770,
+F1 0.692, kept in the repo for reference but no longer served). It's wrapped in a FastAPI backend
 (`milestone_2/backend/`) with a small web frontend (`milestone_2/frontend/`), both containerized
 and wired together with `docker compose`.
 
@@ -77,7 +79,7 @@ and wired together with `docker compose`.
                  │  proxy_pass /api/ ──▶ backend:8000
                  ▼
              backend (FastAPI + uvicorn, :8000)
-                 │  POST /predict  → feature engineering → baseline_model.pkl → label + confidence
+                 │  POST /predict  → tokenize → BERTweet + LoRA adapter → label + confidence
                  │  GET  /health   → liveness + model-loaded check
 ```
 
@@ -107,7 +109,7 @@ Tear down with `docker compose down`.
 ```
 →
 ```json
-{ "text": "...", "prediction": 1, "label": "disaster", "confidence": 0.83 }
+{ "text": "...", "prediction": 1, "label": "disaster", "confidence": 0.99 }
 ```
 
 `GET /health` → `{ "status": "ok", "model_loaded": true }`
@@ -126,10 +128,18 @@ and runs the Playwright test against it.
 
 ### Notes
 
-- `baseline_model.pkl` requires a raw tweet to first be turned into 8 columns
-  (`text` + 7 engineered numeric features — hashtag/mention/URL/exclamation counts, lengths). This
-  logic isn't inside the pickle; it's reimplemented in `milestone_2/backend/app/features.py`,
-  matching the notebook's inference-time cells exactly (verified by comparing API predictions
-  against the notebook's own predictions on sample `test.csv` rows).
-- The pickle was written with scikit-learn 1.9.0; `milestone_2/backend/requirements.txt` pins that
-  version so containers load it without `InconsistentVersionWarning`.
+- The served model is a PEFT LoRA adapter (`training/bertweet_lora_final_fulldata/`) on top of the
+  `vinai/bertweet-base` checkpoint, loaded via `transformers` + `peft` in
+  `milestone_2/backend/app/model.py`. The base checkpoint's weights are baked into the Docker image
+  at build time (see the backend `Dockerfile`) so the container doesn't need network access at
+  runtime.
+- `milestone_2/backend/app/features.py` is the Milestone 1 baseline's feature-engineering pipeline
+  (`text` + 7 engineered numeric columns for `baseline_model.pkl`). It's no longer used by the
+  serving path but is kept, with its tests, as a record of the Milestone 1 deliverable.
+- The `bertweet_lora_final_fulldata` checkpoint originally saved its tokenizer without the
+  fast-tokenizer `tokenizer.json` file, and its `vocab.txt`/`bpe.codes` were rewritten by
+  `save_pretrained` into a format its own "custom" backend can't parse — reloading it standalone
+  silently degraded to character-level tokenization and made the model collapse to always
+  predicting "not disaster". Fixed by restoring the canonical `tokenizer.json`/`vocab.txt`/
+  `bpe.codes` from `vinai/bertweet-base` into the checkpoint directory (the tokenizer itself was
+  never fine-tuned, so this is lossless).

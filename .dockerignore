@@ -3,12 +3,13 @@ main.ipynb
 *.csv
 *.npy
 *.pt
-training/
 .claude/
 .claude-plans/
 strong_baseline_model.pkl
 roberta_*
 bertweet_*
+!training/bertweet_lora_final_fulldata/
+!training/bertweet_lora_final_fulldata/**
 llm_1p5b_200_preds.json
 submission.csv
 node_modules

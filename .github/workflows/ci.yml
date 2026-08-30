@@ -26,7 +26,7 @@ jobs:
 
       - name: Unit + integration tests
         env:
-          MODEL_PATH: ${{ github.workspace }}/milestone_1/baseline_model.pkl
+          MODEL_PATH: ${{ github.workspace }}/training/bertweet_lora_final_fulldata
         run: |
           cd milestone_2/backend
           PYTHONPATH=. pytest tests --cov=app --cov-report=term-missing
@@ -42,7 +42,7 @@ jobs:
 
       - name: Wait for backend health
         run: |
-          for i in $(seq 1 30); do
+          for i in $(seq 1 60); do
             status=$(docker inspect --format='{{json .State.Health.Status}}' "$(docker compose ps -q backend)" 2>/dev/null || echo '""')
             if [ "$status" = '"healthy"' ]; then
               echo "backend healthy"

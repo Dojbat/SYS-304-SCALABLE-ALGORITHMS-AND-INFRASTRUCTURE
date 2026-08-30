@@ -5,9 +5,12 @@
 *.pt
 roberta_*/
 bertweet_*/
+!training/bertweet_lora_final_fulldata/
+!training/bertweet_lora_final_fulldata/**
 llm_*_preds.json
 roberta_lora_progress.json
 .ruff_cache/
 .pytest_cache/
 __pycache__/
 .claude/
+demo_predictions.ipynb

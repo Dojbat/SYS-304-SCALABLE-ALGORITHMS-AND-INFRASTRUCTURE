@@ -10,7 +10,7 @@ echo "Building and starting the stack..."
 docker compose up --build -d
 
 echo "Waiting for backend health check..."
-for _ in $(seq 1 30); do
+for _ in $(seq 1 60); do
   status=$(docker compose ps backend --format json 2>/dev/null | grep -o '"Health":"[a-z]*"' | cut -d'"' -f4 || true)
   if [ "$status" = "healthy" ]; then
     echo "Backend is healthy."
