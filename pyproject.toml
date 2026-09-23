@@ -11,3 +11,4 @@ markers = [
     "e2e: end-to-end UI tests that require a running docker compose stack",
 ]
 addopts = "-m 'not e2e'"
+asyncio_mode = "auto"

@@ -1,0 +1,40 @@
+{
+  "_about": "Concurrent HTTP load test, naive Milestone 2 backend vs optimized Milestone 3 stack. Produced by milestone_3/backend/loadtest.py (40 concurrent POST /predict, 3 runs per scenario) from a python:3.13-slim container on the docker compose network, so Docker Desktop port forwarding is not in the path. Redis flushed before each unique-text run. Memory sampled with docker stats during a run.",
+  "date": "2026-09-23",
+  "machine": "Intel Core i7-1185G7 (4C/8T), 16 GB RAM, Windows 11, Docker Desktop (WSL2, 8 CPUs, 7.6 GiB). On battery; CPU reported 998 MHz.",
+  "concurrency": 40,
+  "runs": {
+    "naive_unique": [
+      {"throughput_rps": 8.3, "mean_ms": 4515.9, "p50_ms": 4643.2, "p95_ms": 4730.3},
+      {"throughput_rps": 8.1, "mean_ms": 4664.7, "p50_ms": 4735.2, "p95_ms": 4810.4},
+      {"throughput_rps": 6.9, "mean_ms": 5453.3, "p50_ms": 5588.5, "p95_ms": 5713.7}
+    ],
+    "optimized_unique": [
+      {"throughput_rps": 49.0, "mean_ms": 554.8, "p50_ms": 614.2, "p95_ms": 717.4},
+      {"throughput_rps": 41.6, "mean_ms": 716.0, "p50_ms": 760.8, "p95_ms": 842.5},
+      {"throughput_rps": 65.3, "mean_ms": 417.6, "p50_ms": 437.5, "p95_ms": 524.4}
+    ],
+    "optimized_cached": [
+      {"throughput_rps": 68.7, "mean_ms": 417.2, "p50_ms": 417.4, "p95_ms": 545.0, "cache_hits": 40},
+      {"throughput_rps": 82.4, "mean_ms": 269.4, "p50_ms": 257.1, "p95_ms": 411.0, "cache_hits": 40},
+      {"throughput_rps": 91.4, "mean_ms": 254.7, "p50_ms": 232.0, "p95_ms": 388.8, "cache_hits": 40}
+    ]
+  },
+  "memory_under_load_mib": {
+    "naive_backend": [848.3, 1086.5],
+    "optimized_backend": 326.8,
+    "optimized_redis": 13.7
+  },
+  "processes_under_load": {"naive": 169, "optimized_backend": 18},
+  "single_request_http_ms_p50": {
+    "naive_from_host": 115.1,
+    "optimized_uncached_from_host": 52.7,
+    "optimized_cached_from_host": 50.4,
+    "optimized_cached_inside_container": 2.2
+  },
+  "readme_reference": {
+    "naive_rps": 12.3,
+    "optimized_unique_rps": 131.7,
+    "optimized_cached_rps": 294.6
+  }
+}

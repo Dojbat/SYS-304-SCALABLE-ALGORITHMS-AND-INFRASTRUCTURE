@@ -1,0 +1,32 @@
+{
+  "naive": {
+    "variant": "naive",
+    "num_samples": 200,
+    "load_time_s": 4.900012599999172,
+    "rss_before_load_mb": 90.267648,
+    "rss_after_load_mb": 988.147712,
+    "model_footprint_mb": 897.880064,
+    "rss_peak_mb": 997.298176,
+    "throughput_req_per_s": 3.9562825477059977,
+    "latency_mean_ms": 252.75787650000893,
+    "latency_p50_ms": 253.75280000116618,
+    "latency_p95_ms": 393.12020000033954,
+    "latency_max_ms": 522.3704999989423,
+    "accuracy_vs_label": 0.885
+  },
+  "optimized": {
+    "variant": "optimized",
+    "num_samples": 200,
+    "load_time_s": 2.335581199999069,
+    "rss_before_load_mb": 89.829376,
+    "rss_after_load_mb": 591.2576,
+    "model_footprint_mb": 501.428224,
+    "rss_peak_mb": 594.292736,
+    "throughput_req_per_s": 22.841390129286967,
+    "latency_mean_ms": 43.77549450001425,
+    "latency_p50_ms": 43.75350000009348,
+    "latency_p95_ms": 68.17589999991469,
+    "latency_max_ms": 87.23599999939324,
+    "accuracy_vs_label": 0.85
+  }
+}

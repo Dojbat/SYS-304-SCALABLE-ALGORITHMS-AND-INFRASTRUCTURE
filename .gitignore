@@ -14,3 +14,10 @@ roberta_lora_progress.json
 __pycache__/
 .claude/
 demo_predictions.ipynb
+milestone_3/merged_model/
+milestone_3/onnx_model/
+milestone_3/results/_naive.json
+milestone_3/results/_optimized.json
+milestone_3/report/REPORT.md
+milestone_3/report/REPORT.html
+milestone_3/report/report.css

@@ -1,0 +1,19 @@
+flowchart TB
+    user(["Browser"]) -->|"HTTP :3000"| nginx["frontend<br/>nginx:alpine"]
+    nginx -->|"proxy /api/predict"| api
+
+    subgraph backend["backend container: FastAPI + uvicorn :8000"]
+        direction LR
+        api["POST /predict"] -->|"2. cache miss:<br/>submit(text)"| batcher["DynamicBatcher<br/>asyncio.Queue<br/>flush at 16 requests or 20 ms"]
+        batcher -->|"3. one predict_batch(texts)<br/>per batch"| model["ONNX Runtime, CPU<br/>BERTweet merged + INT8<br/>model_int8.onnx, 136 MB"]
+    end
+
+    api <-->|"1. GET predict:sha256(text)<br/>hit: return cached=true"| redis[("Redis 7<br/>exact-match cache")]
+    api -->|"4. SET result, TTL 1 h<br/>return cached=false"| redis
+
+    subgraph build["Docker builder stage: runs once at image build"]
+        direction LR
+        lora["LoRA adapter"] --> merge["merge_and_unload()<br/>into bertweet-base"] --> export["ONNX export<br/>(optimum)"] --> quant["quantize_dynamic<br/>INT8 per-channel"]
+    end
+
+    quant -.->|"only the INT8 model is<br/>copied to the runtime image"| model

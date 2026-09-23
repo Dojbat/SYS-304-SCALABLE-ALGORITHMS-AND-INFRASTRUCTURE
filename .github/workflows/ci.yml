@@ -17,18 +17,29 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: pip install -r milestone_2/backend/requirements-dev.txt
+        run: |
+          pip install -r milestone_2/backend/requirements-dev.txt
+          pip install -r milestone_3/backend/requirements-dev.txt
 
       - name: Lint (ruff)
         run: |
           ruff check .
           ruff format --check .
 
-      - name: Unit + integration tests
+      - name: Milestone 2 unit + integration tests
         env:
           MODEL_PATH: ${{ github.workspace }}/training/bertweet_lora_final_fulldata
         run: |
           cd milestone_2/backend
+          PYTHONPATH=. pytest tests --cov=app --cov-report=term-missing
+
+      - name: Milestone 3 unit tests
+        # The optimized ONNX model isn't built in this job (that needs
+        # torch/peft/optimum and a few minutes — see export_onnx.py); the
+        # model-dependent tests skip themselves when it's missing. Batcher,
+        # cache, and API tests run regardless since they mock the model.
+        run: |
+          cd milestone_3/backend
           PYTHONPATH=. pytest tests --cov=app --cov-report=term-missing
 
   docker:
