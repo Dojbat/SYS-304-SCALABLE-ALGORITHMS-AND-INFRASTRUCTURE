@@ -109,7 +109,8 @@ Milestone 3's model and system optimizations are benchmarked against; run it sta
 
 ## Milestone 3: Model & Infrastructure Optimization (Weeks 5–6)
 
-`milestone_3/` is the deployed, optimized system — it's what `docker-compose.yml` builds now. Two
+`milestone_3/` is the optimized system (`docker-compose.yml` now builds the Milestone 4 backend,
+which extends it with monitoring and hot model reload — see the Milestone 4 section below). Two
 layers of optimization, benchmarked separately (`milestone_3/README.md`) and together (the
 `docker compose` stack below):
 
@@ -253,3 +254,44 @@ nginx, and runs the Playwright test against it.
 - Redis failures (connection refused, timeout) are caught around both the cache read and cache
   write in `app/main.py`'s `/predict` handler — a Redis outage degrades to "every request hits the
   model," not a 500.
+
+## Milestone 4: Observability, Monitoring and Automated Retraining (Weeks 7–8)
+
+`milestone_4/` makes the Milestone 3 service observable and lets it improve itself. Full
+walkthrough: [`milestone_4/README.md`](milestone_4/README.md). The design document is
+submitted separately as a PDF.
+
+**Week 7: monitoring.**
+- Every `/predict` call, including 422s and 500s, is logged to **PostgreSQL** (id, latency,
+  status, text, prediction, confidence, cached, model version) through a bounded in-memory queue
+  and a batched `COPY` once a second, so logging stays off the request path.
+- `POST /feedback` records ground-truth labels that arrive later.
+- A **Streamlit dashboard** (<http://localhost:8501>) shows throughput, p50/p95 latency, error
+  rate, confidence and cache hit rate. It measures **data drift** against a committed profile of
+  `train.csv`: PSI on seven text features, out-of-vocabulary rate, and prediction mix.
+- `milestone_4/workload/generate.py` drives normal, drifted (Spanish / Indonesian / Tagalog and
+  English slang) and invalid traffic, and sends delayed labels.
+
+**Week 8: retraining.** `milestone_4/retraining/retrain.py watch` runs on the host (GPU). It
+triggers on a confidence drop, a drop in labelled accuracy, or model age. A cycle then:
+1. fine-tunes the current LoRA adapter on CUDA with new labelled data plus replay;
+2. compares the result with the current model on held-out live data and a guard set;
+3. exports to INT8 ONNX in a pinned container and re-checks it;
+4. if it is better, writes `milestone_4/models/vN`, flips `registry.json`, and the API hot-reloads
+   it with no restart.
+
+**Scaling, step 1.** Each retraining cycle uses a fixed data budget (recent window, capped
+replay, hard examples first). Unlabelled requests older than 30 days are deleted; labelled
+ones are kept. The API runs as N replicas behind an nginx load balancer. See
+`milestone_4/README.md` and the roadmap in the design document.
+
+**Demo result.** Drifted traffic cut the served model's labelled accuracy from 0.86 to 0.73 while
+its mean confidence didn't move (0.91 → 0.92). The accuracy trigger fired, and v2 was deployed
+76 s later. Held-out F1 on the drifted data went from 0.71 to 0.96 (0.94 after INT8), and accuracy
+on normal tweets held (0.859 → 0.854).
+
+```bash
+docker compose up --build -d && docker compose --profile tools build exporter
+python milestone_4/retraining/retrain.py watch --poll 15 --min-new-labels 300 --cooldown 120
+python milestone_4/workload/generate.py --duration 240 --rate 20 --drift-share 0.9
+```

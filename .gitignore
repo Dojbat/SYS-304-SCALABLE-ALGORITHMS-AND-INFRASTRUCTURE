@@ -21,3 +21,7 @@ milestone_3/results/_optimized.json
 milestone_3/report/REPORT.md
 milestone_3/report/REPORT.html
 milestone_3/report/report.css
+milestone_4/models/*
+!milestone_4/models/.gitkeep
+milestone_4/report/*
+.coverage

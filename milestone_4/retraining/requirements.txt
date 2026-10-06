@@ -1,0 +1,11 @@
+# Host-side retraining pipeline. Runs outside docker so it can use the GPU.
+# Install the CUDA build of torch for your GPU first, e.g.:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu128
+torch>=2.8
+transformers>=4.47
+peft>=0.14
+numpy
+onnxruntime
+psycopg[binary]>=3.2
+httpx
+emoji==2.15.0

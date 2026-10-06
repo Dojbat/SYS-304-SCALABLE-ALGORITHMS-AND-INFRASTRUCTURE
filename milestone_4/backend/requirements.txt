@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+redis==5.2.1
+asyncpg==0.30.0
+onnxruntime==1.29.0
+transformers==4.47.0
+# BERTweet's tokenizer turns emoji into text (":fire:") only when this is
+# installed. The retraining host has it, so serving must too, or the model
+# would be served different tokens than it was trained and verified on.
+emoji==2.15.0

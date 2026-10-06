@@ -17,3 +17,4 @@ __pycache__
 *.pyc
 .pytest_cache
 .ruff_cache
+milestone_4/models

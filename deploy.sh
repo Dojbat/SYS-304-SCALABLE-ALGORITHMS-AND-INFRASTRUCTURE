@@ -6,24 +6,16 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Building and starting the stack..."
-docker compose up --build -d
+echo "Building and starting the stack (waits until every service is healthy)..."
+if ! docker compose up --build -d --wait --wait-timeout 600; then
+  echo "Stack did not become healthy. Check: docker compose logs backend" >&2
+  exit 1
+fi
 
-echo "Waiting for backend health check..."
-for _ in $(seq 1 60); do
-  status=$(docker compose ps backend --format json 2>/dev/null | grep -o '"Health":"[a-z]*"' | cut -d'"' -f4 || true)
-  if [ "$status" = "healthy" ]; then
-    echo "Backend is healthy."
-    echo ""
-    echo "App is running:"
-    echo "  Frontend: http://localhost:3000"
-    echo "  Backend:  http://localhost:8000/health"
-    echo ""
-    echo "Tail logs with: docker compose logs -f backend"
-    exit 0
-  fi
-  sleep 2
-done
-
-echo "Timed out waiting for backend to become healthy. Check: docker compose logs backend" >&2
-exit 1
+echo ""
+echo "App is running:"
+echo "  Frontend:  http://localhost:3000"
+echo "  API:       http://localhost:8000/health  (load balancer over $(docker compose ps -q backend | wc -l | tr -d ' ') backend replicas)"
+echo "  Dashboard: http://localhost:8501"
+echo ""
+echo "Tail logs with: docker compose logs -f backend"

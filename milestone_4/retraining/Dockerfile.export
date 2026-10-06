@@ -1,0 +1,15 @@
+# One-shot exporter used by the retraining pipeline: merge LoRA -> ONNX -> INT8.
+# Pins the same torch/transformers/peft/optimum versions as the Milestone 3
+# build, which were verified to produce a correct export (newer transformers
+# versions break the ONNX trace of the attention mask; see export_onnx.py).
+FROM python:3.13-slim
+WORKDIR /export
+
+COPY milestone_3/requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY milestone_4/retraining/export_onnx.py .
+
+# the base model download (~500 MB) is cached in a named volume
+ENV HF_HOME=/hf_cache
+ENTRYPOINT ["python", "export_onnx.py"]
